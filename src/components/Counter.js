@@ -2,28 +2,26 @@ import React, { useState } from 'react';
 
 function Counter() {
   
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(1);
   
   const increment = () => {
     setCount(count + 1);
   };
 
   const decrement = () => {
-    if (count > 0) {
+    if (count > 1) {
       setCount(count - 1);
     }
   };
 
   return (
-    <div className = "quantity">
+    <div className = "flex gap-2">
       
-      <div className='Decrement'>
-      <button onClick={decrement}>-</button>
-      </div>
-      <p>{count}</p>
-      <div className='Increment'>
-      <button onClick={increment}>+</button>
-      </div>
+      <div class="flex items-center justify-center">
+    <button class="w-8 h-8 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300 focus:outline-none" onClick={decrement}>-</button>
+    <p class="mx-4 text-lg font-semibold">{count}</p>
+    <button class="w-8 h-8 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300 focus:outline-none" onClick={increment}>+</button>
+</div>
     </div>
   );
 }

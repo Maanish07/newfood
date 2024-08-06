@@ -1,8 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react'
 
-
-
-
 const CartStateContext = createContext();
 const CartDispatchContext = createContext();
 
