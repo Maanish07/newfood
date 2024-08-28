@@ -11,7 +11,7 @@ function Header() {
             Home
           </Link>
           <Nav className="me-auto">
-          <Nav.Link as={Link} to="/menu">
+            <Nav.Link as={Link} to="/menu">
               Menu
             </Nav.Link>
             <Nav.Link as={Link} to="/Order">
@@ -24,7 +24,10 @@ function Header() {
               Add Member
             </Nav.Link>
             <Nav.Link as={Link} to="/addmenu">
-              addmenu
+              Add Menu
+            </Nav.Link>
+            <Nav.Link as={Link} to="/issue">
+              Issue
             </Nav.Link>
           </Nav>
         </Container>

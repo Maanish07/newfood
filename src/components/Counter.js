@@ -1,29 +1,31 @@
-import React, { useState } from 'react';
+import React from "react";
+import { useDispatch } from "react-redux";
+import { decrement, increment } from "../utils/cartSlice";
 
-function Counter() {
-  
-  const [count, setCount] = useState(1);
-  
-  const increment = () => {
-    setCount(count + 1);
-  };
-
-  const decrement = () => {
-    if (count > 1) {
-      setCount(count - 1);
-    }
-  };
+const Counter = ({ value }) => {
+  const dispatch = useDispatch();
 
   return (
-    <div className = "flex gap-2">
-      
-      <div class="flex items-center justify-center">
-    <button class="w-8 h-8 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300 focus:outline-none" onClick={decrement}>-</button>
-    <p class="mx-4 text-lg font-semibold">{count}</p>
-    <button class="w-8 h-8 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300 focus:outline-none" onClick={increment}>+</button>
-</div>
+    <div className="px-2 py-1 flex items-center border-2 border-green-300 rounded">
+      <button
+        onClick={() => {
+          dispatch(decrement(value));
+        }}
+        className="py-1  text-gray-700 font-bold"
+      >
+        -
+      </button>
+      <span className="px-3">{value?.quantity}</span>
+      <button
+        onClick={() => {
+          dispatch(increment(value));
+        }}
+        className=" py-1  text-gray-700 font-bold "
+      >
+        +
+      </button>
     </div>
   );
-}
+};
 
 export default Counter;

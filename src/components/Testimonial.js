@@ -6,10 +6,6 @@ import "slick-carousel/slick/slick-theme.css";
 
 const Testimonial = () => {
   const [reviews, setReviews] = useState([]);
-  const [bgColor, setBgColor] = useState("");
-  useEffect(() => {
-    setBgColor(getRandomLightHexColor());
-  }, []);
 
   useEffect(() => {
     axios
@@ -21,25 +17,15 @@ const Testimonial = () => {
         console.error("Error fetching reviews:", error);
       });
   }, []);
-  function getRandomLightHexColor() {
-    const r = Math.floor(Math.random() * 128) + 128;
-    const g = Math.floor(Math.random() * 128) + 128;
-    const b = Math.floor(Math.random() * 128) + 128;
-
-    const hexColor = `#${r.toString(16).padStart(2, "0")}${g
-      .toString(16)
-      .padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
-    return hexColor;
-  }
 
   const settings = {
     infinite: true,
-    slidesToShow: 5,
+    slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
     speed: 2000,
     autoplaySpeed: 2000,
-    cssEase: "linear",
+    cssEase: "",
     arrows: false,
     responsive: [
       {
@@ -55,7 +41,7 @@ const Testimonial = () => {
         },
       },
       {
-        breakpoint: 420,
+        breakpoint: 430,
         settings: {
           slidesToShow: 1,
         },
@@ -64,25 +50,48 @@ const Testimonial = () => {
   };
 
   return (
-    <div className="py-12">
-      <h2 className="text-3xl font-bold text-center mb-8">Testimonials</h2>
+    <div className="">
+      <h2 className="text-3xl font-bold text-center ">Customer Reviews</h2>
+      <p className="text-s text-center mb-8">What our customers say about us</p>
       <div className="max-w-7xl mx-auto px-4">
         <Slider {...settings}>
           {reviews.map((userrev, index) => (
-            <div key={index} className="p-4">
-              <div
-                className="p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-60 flex flex-col justify-between"
-                style={{ backgroundColor: bgColor }}
-              >
-                <div className="flex-grow">
-                  <p className="italic text-lg text-gray-700 mb-4">
+            <div key={index} className="p-4 ">
+              <div className="p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-80  flex flex-col justify-between bg-yellow-50 relative">
+                <div className=" items-center mb-4">
+                  <p
+                    style={{
+                      fontFamily: "Dancing Script",
+
+                      fontSize: "30px",
+                      fontWeight: "400",
+                      lineHeight: "30px",
+                    }}
+                    className="text-lg mb-4"
+                  >
                     "{userrev.review}"
                   </p>
-                </div>
-                <div className="mt-4 flex items-center">
-                  <div className="text-gray-900 font-semibold">
-                    {userrev.name}
+                  <div>
+                    <h4
+                      className="text-lg font-semibold text-gray-900"
+                      style={{
+                        fontFamily: "Dancing Script",
+
+                        fontSize: "30px",
+                        fontWeight: "400",
+                        lineHeight: "30px",
+                      }}
+                    >
+                      -{userrev.name}
+                    </h4>
                   </div>
+                </div>
+
+                <div className="flex items-center">
+                  <span className="text-yellow-500 text-xl mr-2">
+                    {"★".repeat(userrev.rating)}
+                  </span>
+                  <span className="text-gray-600">{userrev.rating}/5</span>
                 </div>
               </div>
             </div>

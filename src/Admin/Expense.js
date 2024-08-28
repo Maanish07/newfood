@@ -43,7 +43,7 @@ const Expense = () => {
       <div className="container mx-auto px-4 py-8 mb-16">
         <h1 className="text-3xl font-bold mb-4">Expense Tracker</h1>
         <button
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+          className="bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
           onClick={() => setAddExpense(true)}
         >
           Add Expense

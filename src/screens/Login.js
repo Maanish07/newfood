@@ -39,7 +39,7 @@ const Login = () => {
 
       if (result.success) {
         const token = result.token;
-        Cookies.set("jwt", token, { expires: 1 / 24 });
+        Cookies.set("jwt", token);
 
         const decoded = jwtDecode(token);
         console.log("Decoded token:", decoded);

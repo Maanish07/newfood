@@ -24,7 +24,7 @@ function Swipe() {
   }, []);
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 relative z--1">
       <span className="text-gray-500">
         <h1>
           Happy <span className="text-emerald-500">Moments</span>
@@ -58,11 +58,19 @@ function Swipe() {
             className="swiper-slide flex justify-center items-center"
             style={{ width: "300px", height: "300px" }}
           >
-            <img
-              src={testImage.image}
-              alt={testImage.name}
-              className="h-full w-full object-cover rounded-md"
-            />
+            
+            <a
+              href={`https://www.instagram.com/${testImage.instaid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block h-full w-full"
+            >
+              <img
+                src={testImage.image}
+                alt={testImage.name}
+                className="h-full w-full object-cover rounded-md"
+              />
+            </a>
           </SwiperSlide>
         ))}
 
@@ -71,7 +79,7 @@ function Swipe() {
             <ion-icon name="arrow-back-outline"></ion-icon>
           </div>
           <div className="swiper-button-next slider-arrow">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
+            <ion-icon name="arrow-forward-outline color-emerald-500"></ion-icon>
           </div>
         </div>
       </Swiper>

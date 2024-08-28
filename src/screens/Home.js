@@ -6,21 +6,27 @@ import { CartProvider } from "../context/Cart";
 import { Carousels } from "../components/Carousels";
 import Swipe from "../components/Swipe";
 import Testimonial from "../components/Testimonial";
+import Instagramfeed from "../components/Instagramfeed";
+import Announcementbar from "../components/Announcementbar";
+import BottomNavBar from "../components/BottamNavbar";
+import Slick from "../components/Slick";
+import TextRotator from "../components/TextRotator";
+import MyLocation from "../components/MyLocation";
+import Layout from "../components/Layout";
 
 function Home() {
   return (
     <>
       <CartProvider>
-        <div>
-          <Header />
-        </div>
-        <Carousels />
-        <Menuitem />
-        <Swipe />
-        <Testimonial />
-        <div>
-          <Footer />
-        </div>
+        <Layout>
+          <MyLocation />
+          <Carousels />
+          <Slick />
+          <Menuitem />
+          <Swipe />
+          <Instagramfeed />
+          <Testimonial />
+        </Layout>
       </CartProvider>
     </>
   );

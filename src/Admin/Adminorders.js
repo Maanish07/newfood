@@ -28,6 +28,31 @@ const Adminorders = () => {
       });
   }, []);
 
+  const handleDeliver = (orderId) => {
+    console.log("Order ID:", orderId);
+    axios
+      .put(`http://localhost:4000/order/${orderId}`, { status: "Delivered" })
+      .then((response) => {
+        console.log("Order updated:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating order status:", error);
+      });
+  };
+  const handlePrepare = (orderId) => {
+    console.log("Order ID:", orderId);
+    axios
+
+      .put(`http://localhost:4000/order/${orderId}`, { status: "Preparing" })
+      .then((response) => {
+        console.log("Order updated:", response.data);
+        alert("updated");
+      })
+      .catch((error) => {
+        console.error("Error updating order status:", error);
+      });
+  };
+
   const handleCheckboxChange = (index) => {
     if (!order[index]?.disabled) {
       const updatedOrder = [...order];
@@ -49,37 +74,7 @@ const Adminorders = () => {
     <>
       <Header />
       <h1 className="text-2xl font-bold my-4">Order</h1>
-      <div className="container mx-auto px-4 py-6">
-        <div className="w-full overflow-x-auto bg-white shadow-md rounded-lg">
-          <table className="min-w-full bg-white border border-gray-300 rounded">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-6 py-4 text-sm font-medium text-gray-700">
-                  Order Id
-                </th>
-                <th className="px-6 py-4 text-sm font-medium text-gray-700">
-                  Name
-                </th>
-                <th className="px-6 py-4 text-sm font-medium text-gray-700">
-                  Table Number
-                </th>
-                <th className="px-6 py-4 text-sm font-medium text-gray-700">
-                  Items
-                </th>
-                <th className="px-6 py-4 text-sm font-medium text-gray-700">
-                  Price
-                </th>
-                <th className="px-6 py-4 text-sm font-medium text-gray-700">
-                  Payment
-                </th>
-                <th className="px-6 py-4 text-sm font-medium text-gray-700">
-                  Action
-                </th>
-              </tr>
-            </thead>
-          </table>
-        </div>
-      </div>
+
       <div className="container mx-auto px-4">
         <ul className="space-y-4">
           {order.length === 0 ? (
@@ -99,18 +94,49 @@ const Adminorders = () => {
                     className="mr-2"
                   />
                   <div>
-                    <div
-                      className={`text-lg ${
-                        orderItem.completed ? "line-through text-gray-500" : ""
-                      }`}
-                    >
-                      {orderItem.name} - {orderItem.phone} - Table{" "}
-                      {orderItem.table} - Created at -{" "}
-                      {new Date(orderItem.createdAt).toLocaleString()}
+                    <div className="flex space-between">
+                      <div
+                        className={`text-lg ${
+                          orderItem.completed
+                            ? "line-through text-gray-500"
+                            : ""
+                        }`}
+                      >
+                        {orderItem.name} -{" "}
+                        <a href={`tel:${orderItem.phone}`}>
+                          <img
+                            className="w-4 h-4"
+                            src="https://cdn-icons-png.flaticon.com/128/455/455705.png"
+                          />
+                          {orderItem.phone}
+                        </a>{" "}
+                        - Table {orderItem.table} - Created at -{" "}
+                        {new Date(orderItem.createdAt).toLocaleString()}
+                      </div>
+                      <div>
+                        {orderItem.status ? (
+                          <p>Prepring</p>
+                        ) : (
+                          <button
+                            onClick={() => handlePrepare(orderItem._id)}
+                            className="px-4 py-2 bg-yellow-500 text-white rounded"
+                          >
+                            Preparing
+                          </button>
+                        )}
+                      </div>
+                      <div>
+                        <button
+                          onClick={() => handleDeliver(orderItem._id)}
+                          className="px-4 py-2 bg-green-500 text-white rounded"
+                        >
+                          Delivered
+                        </button>
+                      </div>
                     </div>
                     <div>
-                      {orderItem.cartItem && orderItem.cartItem.length > 0 ? (
-                        orderItem.cartItem.map((foodItem) => (
+                      {orderItem.cartItems && orderItem.cartItems.length > 0 ? (
+                        orderItem.cartItems.map((foodItem) => (
                           <Card
                             className="flex"
                             key={foodItem._id}
@@ -118,7 +144,9 @@ const Adminorders = () => {
                           >
                             <Card.Img variant="top" src={foodItem.image} />
                             <Card.Body>
-                              <Card.Title>{foodItem.name}</Card.Title>
+                              <Card.Title>
+                                {foodItem.name}({foodItem.quantity})
+                              </Card.Title>
                               <Card.Text>Price: {foodItem.price}</Card.Text>
                             </Card.Body>
                           </Card>
@@ -127,6 +155,21 @@ const Adminorders = () => {
                         <p>No items in the cart.</p>
                       )}
                     </div>
+                    <div>
+                      {orderItem.payment_id ? (
+                        <button
+                          className="px-4 py-2 bg-green-500 text-white rounded"
+                          aria-disabled="true"
+                        >
+                          Paid
+                        </button>
+                      ) : (
+                        <button className="px-4 py-2 bg-red-500 text-white rounded">
+                          Unpaid
+                        </button>
+                      )}
+                    </div>
+
                     {orderItem.completed && (
                       <span className="text-sm text-gray-500 ml-4">
                         - Delivered at{" "}
@@ -143,6 +186,7 @@ const Adminorders = () => {
           Total Price: Rs. {total.toFixed(2)}
         </h5>
       </div>
+
       <Footer />
     </>
   );

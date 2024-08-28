@@ -2,18 +2,18 @@ import { useState } from "react";
 import React from "react";
 import Header from "./Header";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const Menumanage = () => {
-  let navigate = useNavigate();
-  const [menu, setMenu] = useState({
-    image: "",
-    name: "",
-    price: "",
-    description: "",
-    veg: "",
-    bestsellers: "",
-  });
+  const navigate = useNavigate();
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [message, setMessage] = useState("");
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setPreview(URL.createObjectURL(e.target.files[0]));
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -23,67 +23,94 @@ export const Menumanage = () => {
     }));
   };
 
+  const [menu, setMenu] = useState({
+    image: file,
+    name: "",
+    price: "",
+    description: "",
+    veg: "",
+    bestsellers: false,
+  });
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await axios.post("http://localhost:4000/menuitem", menu, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     console.log("Menu item added", menu);
+  //     navigate("/");
+  //   } catch (error) {
+  //     console.error("Error adding menu item:", error);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!file) {
+      setMessage("Please select a file first");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("files", file);
+
     try {
-      await axios.post(
+      const response = await axios.post(
         "http://localhost:4000/menuitem",
-        {
-          image: menu.image,
-          name: menu.name,
-          price: menu.price,
-          description: menu.description,
-          veg: menu.veg,
-          bestsellers: menu.bestsellers,
-        },
+        menu,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      console.log("menu added", menu).then((rs) => {
-        console.log(rs.data);
+
+      console.log("menu updated", menu);
+      if (response) {
         navigate("/");
-      });
+      }
     } catch (error) {
-      console.error("Error registering user:", error);
+      setMessage("Error uploading image");
+      console.error("Error uploading image:", error);
     }
   };
-  console.log(menu);
+
   return (
     <>
       <Header />
-      <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-black">
-          Add Item
-        </h1>
-        <form
-          className="space-y-4 md:space-y-6"
-          onSubmit={(e) => handleSubmit(e)}
-        >
-          {" "}
+      <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">New Menu Item</h1>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label
-              htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="file-upload"
+              className="block text-sm font-medium text-gray-700"
             >
-              Add Image
+              Image
             </label>
-            <input
-              type="file"
-              name="Image"
-              id="Image"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Name"
-              required=""
-              onChange={handleChange}
-            />
+            <div className="mt-1 flex items-center">
+              <label
+                htmlFor="file-upload"
+                className="cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                <span>Upload a file</span>
+                <input
+                  id="file-upload"
+                  name="file-upload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
+            </div>
           </div>
           <div>
             <label
               htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block text-sm font-medium text-gray-700"
             >
               Name
             </label>
@@ -91,16 +118,16 @@ export const Menumanage = () => {
               type="text"
               name="name"
               id="name"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block w-full mt-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               placeholder="Name"
-              required=""
+              required
               onChange={handleChange}
             />
           </div>
           <div>
             <label
-              htmlFor="Number"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-700"
             >
               Price
             </label>
@@ -108,82 +135,89 @@ export const Menumanage = () => {
               type="number"
               name="price"
               id="price"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="000"
-              required=""
+              className="block w-full mt-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              placeholder="Price"
+              required
               onChange={handleChange}
             />
           </div>
           <div>
             <label
-              htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
             >
               Description
             </label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            <textarea
+              name="description"
+              id="description"
+              className="block w-full mt-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               placeholder="Description"
-              required=""
+              rows="3"
+              required
               onChange={handleChange}
             />
+          </div>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm font-medium text-gray-700">Type:</span>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <input
+                  id="veg"
+                  type="radio"
+                  name="veg"
+                  value="veg"
+                  checked={menu.veg === "veg"}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500"
+                />
+                <label
+                  htmlFor="veg"
+                  className="ml-2 text-sm font-medium text-gray-700"
+                >
+                  Veg
+                </label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  id="nonveg"
+                  type="radio"
+                  name="veg"
+                  value="nonveg"
+                  checked={menu.veg === "nonveg"}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500"
+                />
+                <label
+                  htmlFor="nonveg"
+                  className="ml-2 text-sm font-medium text-gray-700"
+                >
+                  Non-Veg
+                </label>
+              </div>
+            </div>
           </div>
           <div className="flex items-center">
-            <label>Option</label>
-            <div className="flex items-center ">
-              <input
-                checked
-                id="default-radio-1"
-                type="radio"
-                value=""
-                name="default-radio"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                onChange={handleChange}
-              />
-              <label
-                for="default-radio-1"
-                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                Veg
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                id="default-radio-2"
-                type="radio"
-                value=""
-                name="default-radio"
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                onChange={handleChange}
-              />
-              <label
-                for="default-radio-2"
-                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                Non Veg
-              </label>
-            </div>
-          </div>
-          <label className="inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
-              value=""
-              className="sr-only peer"
+              name="bestsellers"
+              id="bestsellers"
+              checked={menu.bestsellers}
               onChange={handleChange}
+              className="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500"
             />
-            <div className="relative w-11 h-6 bg-gray-800 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-yellow-600"></div>
-            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+            <label
+              htmlFor="bestsellers"
+              className="ml-2 text-sm font-medium text-gray-700"
+            >
               Best Sellers
-            </span>
-          </label>
+            </label>
+          </div>
           <button
             type="submit"
-            className="w-full text-black bg-primary-100 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            className="w-full py-2 px-4 text-white bg-black hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm font-medium"
           >
-            Create an account
+            Add Item
           </button>
         </form>
       </div>

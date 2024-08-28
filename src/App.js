@@ -4,7 +4,7 @@ import Home from "./screens/Home";
 import MyOrder from "./screens/MyOrder";
 import Signup from "./screens/Signup";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Cart from "./screens/Cart";
+import Cart from "./components/Cart";
 import { CartProvider } from "./components/ContextReducer";
 import Login from "./screens/Login";
 import Admin from "./Admin/Admin";
@@ -20,6 +20,8 @@ import { Addmember } from "./Admin/Addmember";
 import Menu from "./Admin/Menu";
 import Cookies from "js-cookie";
 import Picsupload from "./components/Picsupload";
+import Issue from "./Admin/Issue";
+import Userinfo from "./components/UserInfo";
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
         <BrowserRouter>
           <CartProvider>
             <Routes>
+              <Route path="/user" element={<Userinfo />} />
               <Route path="/" element={<Home />} />
               <Route path="/myorder" element={<MyOrder />} />
               <Route path="/signup" element={<Signup />} />
@@ -43,6 +46,7 @@ function App() {
                 <Route path="/expense" element={<Expense />} />
                 <Route path="/addmember" element={<Addmember />} />
                 <Route path="/addmenu" element={<Menumanage />} />
+                <Route path="/issue" element={<Issue />} />
               </Route>
             </Routes>
           </CartProvider>

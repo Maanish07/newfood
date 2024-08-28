@@ -22,7 +22,7 @@ const Addexpense = ({ onAddExpense, onClose }) => {
     onAddExpense(newTask);
     setTask("");
     setAmount("");
-    onClose(); // Close the lightbox after adding expense
+    onClose(); 
   };
 
   return (
@@ -57,7 +57,7 @@ const Addexpense = ({ onAddExpense, onClose }) => {
               </button>
               <button
                 type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+                className="bg-black text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
               >
                 Add Expense
               </button>

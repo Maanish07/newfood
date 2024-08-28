@@ -87,7 +87,7 @@ export default function TabsLgPillLeadingIcon() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Sidi Dev"
+                  placeholder="Name"
                   id="username"
                   className="w-full p-2.5 bg-transparent outline-none"
                 />

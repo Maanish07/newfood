@@ -3,10 +3,24 @@ import axios from "axios";
 import Header from "../components/Header";
 import { Footer } from "../components/Footer";
 import Review from "../components/Review";
+import Issue from "../components/Issue";
+import BottomNavBar from "../components/BottamNavbar";
 
 export default function MyOrder() {
   const [fooditem, setFooditem] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isIssueOpen, setIsIssueOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+  const handleIssueClick = (orderId) => {
+    setSelectedOrderId(orderId);
+    setIsIssueOpen(true);
+  };
+
+  const handleCloseIssue = () => {
+    setIsIssueOpen(false);
+    setSelectedOrderId(null); // Reset the orderId when closing
+  };
 
   const handleButtonClick = () => {
     setIsPopupOpen(true);
@@ -18,7 +32,7 @@ export default function MyOrder() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/order")
+      .get("http://localhost:4000/order/")
       .then((response) => {
         setFooditem(response.data);
       })
@@ -27,55 +41,132 @@ export default function MyOrder() {
       });
   }, []);
 
+  const handlePaylater = (orderId) => {
+    console.log("order_Id", orderId);
+  };
+
   return (
     <>
-      <div>
-        <Header />
-      </div>
+      <Header />
+      <div className="pt-20 container mx-auto p-6">
+        <div className="">
+          <h1 className="text-3xl font-bold mb-6 text-left">My Orders</h1>
 
-      <h1 className="text-2xl font-bold mb-4">My Orders</h1>
-      <button
-        className="px-4 py-2 bg-black bold text-white rounded-md hover:bg-green-600 mr-4"
-        onClick={handleButtonClick}
-      >
-        Add Review
-      </button>
-      <button onClick={handleClosePopup}>Close</button>
-      {isPopupOpen && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <Review onClose={handleClosePopup} />
+          <div className="flex justify-end mb-6">
+            <button
+              className="px-4 py-2  text-white font-bold rounded-md  mr-4"
+              style={{
+                background:
+                  "linear-gradient(-90deg, #007cf0, #00dfd8, #ff0080, #007cf0)",
+                backgroundSize: "400% 100%",
+                animation:
+                  "collaboration-button_backgroundAnim 8s ease-in-out infinite",
+              }}
+              onClick={handleButtonClick}
+            >
+              Add Review
+            </button>
           </div>
         </div>
-      )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {fooditem.map((foodItem) => (
-          <div
-            key={foodItem._id}
-            className="border-b-1 border-solid border-gray"
-          >
-            <div className="p-4 flex flex-row justify-between">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">{foodItem.name}</h2>
-                <p className="text-gray-600 mb-1">Phone: {foodItem.phone}</p>
-                <p className="text-gray-600 mb-1">User ID: {foodItem.userId}</p>
-                <p className="text-gray-600 mb-1">Table: {foodItem.table}</p>
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Cart Items:</h3>
-                  {(foodItem.cartItem || []).map((cartItem, index) => (
-                    <div key={index}>
-                      <p className="text-gray-600 mb-1">
-                        Name: {cartItem.name}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+
+        {isPopupOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-gradient-to-r from-purple-200 via-purple-300 to-yellow-200 p-6 rounded-lg shadow-lg max-w-lg w-full">
+              <button
+                className="text-red hover:text-gray-700 float-right"
+                onClick={handleClosePopup}
+              >
+                Close
+              </button>
+              <Review onClose={handleClosePopup} />
             </div>
           </div>
-        ))}
+        )}
+
+        {/* {isIssueOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+              <button
+                className="text-red hover:text-gray-700 float-right"
+                onClick={handleCloseIssue}
+              >
+                Close
+              </button>
+              <Issue />
+            </div>
+          </div>
+        )} */}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {fooditem.map((foodItem) => (
+            <div
+              key={foodItem._id}
+              className="bg-white p-6 rounded-lg shadow-md border border-gray-200"
+            >
+              <div className="mb-4 flex justify-between">
+                <p className="text-gray-700 mb-1">
+                  <strong>Table:</strong> {foodItem.table}
+                </p>
+                <p className="text-sm sm:text-base mb-2 text-gray-500">
+                  <span
+                    className={`font-semibold ${
+                      foodItem.status === "Delivered"
+                        ? "text-green-600"
+                        : "text-yellow-600"
+                    }`}
+                  >
+                    {foodItem.status}
+                  </span>
+                </p>
+                <span>
+                  {foodItem.payment_id ? (
+                    <span>{foodItem.amount}</span>
+                  ) : (
+                    <button
+                      onClick={() => handlePaylater(foodItem._id)}
+                      className="text-blue-400"
+                    >
+                      {" "}
+                      Pay Now ➔{" "}
+                    </button>
+                  )}
+                </span>
+              </div>
+              <hr />
+              <div>
+                <ul className="list-disc pl-5 text-gray-700">
+                  {(foodItem.cartItems || []).map((cartItem, index) => (
+                    <li key={index} className="mb-1">
+                      {cartItem.name}({cartItem.quantity})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {isIssueOpen && selectedOrderId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+                    <button
+                      className="text-red hover:text-gray-700 float-right"
+                      onClick={handleCloseIssue}
+                    >
+                      Close
+                    </button>
+                    <Issue
+                      orderId={selectedOrderId}
+                      onClose={handleCloseIssue}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-      <div>
+      <div className="mt-20 sm:hidden">
+        <BottomNavBar />
+      </div>
+      <div className="hidden sm:block">
         <Footer />
       </div>
     </>
